@@ -1,0 +1,78 @@
+/* Tailwind CSS v4 entry (CSS-first config; content is auto-detected). */
+@import 'tailwindcss';
+@import './theme.css';
+
+/* Dark mode is a class on <html>, driven by ThemeService, so the user's choice
+   can beat the OS setting. `:where()` keeps the variant at zero specificity. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    color-scheme: light;
+    /* Roll numbers, percentages and dates line up in columns everywhere in
+       this app, so lining figures are the default rather than an opt-in. */
+    font-variant-numeric: tabular-nums;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--t-canvas);
+    color: var(--t-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  /* One focus treatment for the whole app: keyboard users always get the same
+     signal, and it reads on both themes. */
+  :focus-visible {
+    outline: 2px solid var(--t-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--t-accent-soft);
+    color: var(--t-ink);
+  }
+
+  /* Form controls inherit the page's face rather than the browser's. */
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer utilities {
+  /* For prose columns; most of this app is tabular and does not want it. */
+  .measure {
+    max-width: 68ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

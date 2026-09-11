@@ -1,0 +1,34 @@
+# Render Blueprint for the FastAPI backend (free tier), deployed from source on
+# Render's native Python runtime -- no Docker image is built.
+# Postgres is provided externally by Neon: set DATABASE_URL as a secret in the
+# Render dashboard (sync: false below keeps it out of source control).
+services:
+  - type: web
+    name: cms-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    # Dependencies are declared in pyproject.toml; pip_sync.py installs them
+    # (runtime only -- no dev group in production).
+    buildCommand: pip install --upgrade pip && python scripts/pip_sync.py
+    # Applies migrations and seeds the super-admin, then binds uvicorn to $PORT.
+    startCommand: ./scripts/start.sh
+    healthCheckPath: /api/v1/health
+    envVars:
+      # tomllib (used by scripts/pip_sync.py) needs 3.11+.
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: ENV
+        value: prod
+      - key: DEBUG
+        value: "false"
+      - key: DB_SSL
+        value: "true"
+      # Neon connection string. Set in the dashboard.
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      # Comma-separated; include your Vercel domain.
+      - key: CORS_ORIGINS
+        sync: false

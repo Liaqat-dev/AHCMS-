@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>College MS · Staff</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- Faustina for headings, Public Sans for everything worked with.
+         See src/theme.css for why these two. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Faustina:wght@500;600&family=Public+Sans:wght@400;500;600&display=swap"
+    />
+    <!-- Paint the right ground before Angular boots, so a reload in dark mode
+         does not flash white. Mirrors ThemeService's storage key. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('cms.theme');
+          var dark =
+            stored === 'dark' ||
+            (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>

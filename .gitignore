@@ -22,10 +22,6 @@ dist/
 npm-debug.log*
 yarn-error.log*
 
-# ---- Docker ----
-# (compose overrides intentionally tracked; local-only ones ignored)
-docker-compose.local.yml
-
 # ---- IDE / OS ----
 .idea/
 .vscode/

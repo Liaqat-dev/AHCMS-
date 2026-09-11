@@ -1,0 +1,186 @@
+/* =============================================================================
+   Theme tokens — the one file to edit when you want different colours.
+   =============================================================================
+
+   Two layers, on purpose:
+
+   1. RAW PALETTE (--petrol-600, --stone-100, ...) — the actual pigments.
+   2. SEMANTIC TOKENS (--t-accent, --t-canvas, ...) — what a thing is *for*.
+
+   Components only ever use layer 2, so changing the whole product's colour is
+   editing the hex values here and nothing else. Rename nothing; the Tailwind
+   utilities below are generated from these names.
+
+   Dark is not an inversion. Every token is redefined under `.dark` so each
+   theme is a considered set rather than a filter over the other.
+
+   Palette rationale: a petrol accent, not the usual indigo, because the domain
+   has already claimed green / amber / red for present / leave / absent. The
+   brand colour has to stay out of that range or a register stops being
+   readable at a glance. Neutrals are warm stone — the colour of the paper this
+   software replaces — rather than a blue-grey.
+============================================================================= */
+
+:root {
+  /* ---- Raw palette: light ------------------------------------------------ */
+  --stone-000: #ffffff;
+  --stone-050: #f1f0ea; /* page */
+  --stone-100: #e7e5dd; /* inset, table headers */
+  --stone-200: #d5d2c7; /* rules and borders */
+  --stone-300: #b8b4a6;
+  --stone-600: #5f635a; /* secondary text */
+  --stone-900: #1e211c; /* primary text */
+
+  --petrol-050: #d9eaeb;
+  --petrol-100: #b4d6d9;
+  --petrol-600: #0d5a61; /* accent */
+  --petrol-700: #0a464c; /* accent, pressed */
+
+  --leaf-050: #dcecdf;
+  --leaf-600: #2e6b3e; /* present, saved, healthy */
+  --amber-050: #f6e9cf;
+  --amber-600: #8f5e0f; /* leave, needs attention */
+  --clay-050: #f6dedb;
+  --clay-600: #a32c24; /* absent, destructive, error */
+
+  /* ---- Semantic tokens: light -------------------------------------------- */
+  --t-canvas: var(--stone-050);
+  --t-surface: var(--stone-000);
+  --t-sunken: var(--stone-100);
+  --t-line: var(--stone-200);
+  --t-line-strong: var(--stone-300);
+  /* Rules *inside* a panel — between table rows — sit quieter than the
+     panel's own edge, so a long list does not read as a stack of boxes. */
+  --t-line-soft: #e5e3da;
+
+  --t-ink: var(--stone-900);
+  --t-ink-muted: var(--stone-600);
+  --t-ink-faint: var(--stone-300);
+  --t-ink-inverse: var(--stone-000);
+
+  --t-accent: var(--petrol-600);
+  --t-accent-hover: var(--petrol-700);
+  --t-accent-soft: var(--petrol-050);
+  --t-accent-line: var(--petrol-100);
+  --t-on-accent: #ffffff;
+
+  --t-ok: var(--leaf-600);
+  --t-ok-soft: var(--leaf-050);
+  --t-warn: var(--amber-600);
+  --t-warn-soft: var(--amber-050);
+  --t-danger: var(--clay-600);
+  --t-danger-soft: var(--clay-050);
+  --t-on-danger: #ffffff;
+
+  /* The modal is the only thing that floats, so it is the only shadow. */
+  --t-shadow-raised: 0 24px 60px -12px rgb(30 33 28 / 0.28), 0 2px 8px rgb(30 33 28 / 0.08);
+  --t-scrim: rgb(30 33 28 / 0.42);
+}
+
+.dark {
+  /* ---- Raw palette: dark -------------------------------------------------- */
+  --stone-000: #1a1d1a; /* raised surfaces sit above the page here */
+  --stone-050: #121412;
+  --stone-100: #0d0f0d;
+  --stone-200: #2c302b;
+  --stone-300: #454a43;
+  --stone-600: #9ba095;
+  --stone-900: #e8e9e3;
+
+  --petrol-050: #0f2e31;
+  --petrol-100: #16454a;
+  --petrol-600: #57bfc8;
+  --petrol-700: #7ad2d9;
+
+  --leaf-050: #16301c;
+  --leaf-600: #6bbd7e;
+  --amber-050: #33260c;
+  --amber-600: #d8a34a;
+  --clay-050: #381814;
+  --clay-600: #e8837a;
+
+  /* ---- Semantic tokens: dark ---------------------------------------------- */
+  --t-canvas: var(--stone-050);
+  --t-surface: var(--stone-000);
+  --t-sunken: var(--stone-100);
+  --t-line: var(--stone-200);
+  --t-line-strong: var(--stone-300);
+  --t-line-soft: #1f231e;
+
+  --t-ink: var(--stone-900);
+  --t-ink-muted: var(--stone-600);
+  --t-ink-faint: var(--stone-300);
+  --t-ink-inverse: var(--stone-050);
+
+  --t-accent: var(--petrol-600);
+  --t-accent-hover: var(--petrol-700);
+  --t-accent-soft: var(--petrol-050);
+  --t-accent-line: var(--petrol-100);
+  /* Ink on a light petrol fill, not white — white on #57BFC8 fails contrast. */
+  --t-on-accent: #08211f;
+
+  --t-ok: var(--leaf-600);
+  --t-ok-soft: var(--leaf-050);
+  --t-warn: var(--amber-600);
+  --t-warn-soft: var(--amber-050);
+  --t-danger: var(--clay-600);
+  --t-danger-soft: var(--clay-050);
+  --t-on-danger: #2a0f0c;
+
+  --t-shadow-raised: 0 24px 60px -12px rgb(0 0 0 / 0.7), 0 2px 8px rgb(0 0 0 / 0.4);
+  --t-scrim: rgb(6 8 6 / 0.66);
+}
+
+/* =============================================================================
+   Tailwind token registration.
+
+   `@theme inline` (rather than plain `@theme`) is what makes dark mode work:
+   it puts `var(--t-…)` straight into the generated utility, so `bg-surface`
+   re-resolves when `.dark` redefines the variable. A plain `@theme` would bake
+   today's hex into the class and the theme switch would do nothing.
+============================================================================= */
+
+@theme inline {
+  --color-canvas: var(--t-canvas);
+  --color-surface: var(--t-surface);
+  --color-sunken: var(--t-sunken);
+  --color-line: var(--t-line);
+  --color-line-strong: var(--t-line-strong);
+  --color-line-soft: var(--t-line-soft);
+
+  --color-ink: var(--t-ink);
+  --color-ink-muted: var(--t-ink-muted);
+  --color-ink-faint: var(--t-ink-faint);
+  --color-ink-inverse: var(--t-ink-inverse);
+
+  --color-accent: var(--t-accent);
+  --color-accent-hover: var(--t-accent-hover);
+  --color-accent-soft: var(--t-accent-soft);
+  --color-accent-line: var(--t-accent-line);
+  --color-on-accent: var(--t-on-accent);
+
+  --color-ok: var(--t-ok);
+  --color-ok-soft: var(--t-ok-soft);
+  --color-warn: var(--t-warn);
+  --color-warn-soft: var(--t-warn-soft);
+  --color-danger: var(--t-danger);
+  --color-danger-soft: var(--t-danger-soft);
+  --color-on-danger: var(--t-on-danger);
+
+  --color-scrim: var(--t-scrim);
+
+  /* Radius carries meaning: form controls are crisp, panels are softer, and
+     the modal — the one element that leaves the page — is softer still. One
+     radius on everything flattens that hierarchy. */
+  --radius-control: 3px;
+  --radius-panel: 5px;
+  --radius-raised: 11px;
+
+  --shadow-raised: var(--t-shadow-raised);
+
+  /* Faustina for headings, Public Sans for everything worked with. Public Sans
+     was drawn for government record systems; its figures line up in a column,
+     which is most of what this app shows. */
+  --font-display: 'Faustina', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Public Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
